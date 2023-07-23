@@ -1,0 +1,49 @@
+{% extends 'layout.html' %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>소켓 연결 테스트</h1>
+
+    <button id="new_room_btn">채팅방 생성</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = new io.connect("ws://localhost:4013/room", {
+        // 네임 스페이스
+        path: "/socket.io",
+      });
+
+      socket.on("newRoom", (data) => {
+        console.log("newRoom ===", data);
+        socket.emit("newRoom", "사용자 입장");
+      });
+
+      socket.on("invitation", (data) => {});
+
+      socket.on("removeRoom", (data) => {
+        console.log("removeRoom ===", data);
+        socket.emit("removeRoom", "사용자 퇴장");
+      });
+
+      socket.onmessage = function (event) {
+        console.log(event.data);
+        socket.send("클라이언트 메시지 : from client");
+      };
+
+      socket.on("join", (data) => {});
+      socket.on("exit", (data) => {});
+
+      const newRoomBtn = document.querySelector("#new_room_btn");
+      newRoomBtn.addEventListener("click", () => {
+        console.log(" socket.emit(newRoom, 입장할거야)");
+        socket.emit("newRoom", "입장할거야");
+      });
+    </script>
+  </body>
+</html>
+{% endblock %}
