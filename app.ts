@@ -9,6 +9,7 @@ import path from "path";
 import indexRouter from "./routes";
 import connectMongoose from "./schemas";
 import ColorHash from "color-hash";
+// TEST TEXT
 dotenv.config();
 // mongoose
 connectMongoose();
