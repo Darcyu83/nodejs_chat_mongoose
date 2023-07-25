@@ -9,7 +9,6 @@ import path from "path";
 import indexRouter from "./routes";
 import connectMongoose from "./schemas";
 import ColorHash from "color-hash";
-// As Submodule here
 dotenv.config();
 // mongoose
 connectMongoose();
