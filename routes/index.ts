@@ -4,7 +4,7 @@ import { createRoom, enterRoom, removeRoom, renderRoom } from "./controllers";
 const indexRouter = express.Router();
 
 indexRouter.get("/", (req, res) => {
-  res.render("index");
+  res.send("<h1>hello From Node</h1>");
 });
 
 indexRouter.get("/room", renderRoom);
