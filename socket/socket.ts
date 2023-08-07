@@ -9,8 +9,8 @@ const initSocket = (
     transports: ["polling", "websocket"],
   });
 
-  const room = io.of("room");
-  const chat = io.of("chat");
+  const room = io.of("/room");
+  const chat = io.of("/chat");
 
   room.on("connection", (socket) => {
     const req = socket.request;

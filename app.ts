@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import express, { ErrorRequestHandler, RequestHandler } from "express";
-import SocketIO from "./socket/socket";
+import initSocket from "./socket/socket";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
@@ -70,5 +70,5 @@ const server = app.listen(app.get("port"), () => {
   console.log(`포트 ${app.get("port")}번에서 대기`);
 });
 
-const io = SocketIO(server);
+const io = initSocket(server);
 app.set("io", io);
