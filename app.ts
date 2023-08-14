@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import path from "path";
 import indexRouter from "./routes";
-import connectMongoose from "./schemas";
+import connectMongoose from "./schemas_back";
 import ColorHash from "color-hash";
 // TEST TEXT
 dotenv.config();

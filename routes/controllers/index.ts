@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import roomSchema from "../../schemas/room";
-import { ChatMsg, ChatRoom } from "../../schemas";
+import roomSchema from "../../schemas_back/room";
+import { ChatMsg, ChatRoom } from "../../schemas_back";
 
 export const renderRoom: RequestHandler = (req, res, next) => {
   res.render("index", { title: "GIF 채팅방 생성" });
