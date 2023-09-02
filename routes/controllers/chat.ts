@@ -2,9 +2,11 @@ import { RequestHandler } from "express";
 import roomSchema from "../../schemas/room";
 import { ChatMsg, ChatRoom } from "../../schemas";
 
-export const renderRoom: RequestHandler = (req, res, next) => {
-  res.render("index", { title: "GIF 채팅방 생성" });
+export const getRooms: RequestHandler = async (req, res, next) => {
+  const room = await ChatRoom.find({});
+  res.status(200).json(room);
 };
+
 export const createRoom: RequestHandler = async (req, res, next) => {
   try {
     const newRoom = await ChatRoom.create({
@@ -15,13 +17,15 @@ export const createRoom: RequestHandler = async (req, res, next) => {
     });
 
     const io = req.app.get("io");
+
     io.of("/room").emit("newRoom", newRoom);
 
-    if (req.body.password) {
-      res.redirect(`/room/${newRoom._id}?password=${req.body.password}`);
-    } else {
-      res.redirect(`/room/${newRoom._id}`);
-    }
+    // if (req.body.password) {
+    //   res.redirect(`/room/${newRoom._id}?password=${req.body.password}`);
+    // } else {
+    //   res.redirect(`/room/${newRoom._id}`);
+    // }
+    res.status(200).json(newRoom);
   } catch (error) {
     console.log(error);
     next(error);
