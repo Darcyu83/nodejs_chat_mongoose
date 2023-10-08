@@ -1,6 +1,11 @@
 import { Server } from "socket.io";
 import http from "http";
-import { allowlist, socketAllowedHeaders } from "../constants/list";
+import {
+  NS_CHAT,
+  NS_ROOM,
+  allowlist,
+  socketAllowedHeaders,
+} from "../constants/constants";
 
 const initSocket = (
   server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
@@ -16,8 +21,6 @@ const initSocket = (
     },
   });
 
-  const NS_ROOM = "/room";
-  const NS_CHAT = "/chat";
   // 네임스페이스
   const room = io.of(`${NS_ROOM}`);
   const chat = io.of(`${NS_CHAT}`);
@@ -64,6 +67,7 @@ const initSocket = (
     //
     socket.on("join", (data) => {
       console.log("chat join :: ", data, ip, socket.id);
+      socket.join(data);
     });
 
     //
@@ -75,6 +79,10 @@ const initSocket = (
     socket.on("disconnect", (data) => {
       console.log("chat disconnect :: ", data, ip, socket.id);
       socket.leave("roomId");
+    });
+
+    socket.on("chat", (msg) => {
+      console.log("chat :: ", msg, ip, socket.id);
     });
 
     socket.emit("join", " chat 네임스페이스 연결되었고 서버에서 채팅 참여");
