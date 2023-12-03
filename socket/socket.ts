@@ -21,6 +21,8 @@ const initSocket = (
     },
   });
 
+  io.emit("entire", "Global");
+
   // 네임스페이스
   const room = io.of(`${NS_ROOM}`);
   const chat = io.of(`${NS_CHAT}`);
@@ -29,7 +31,7 @@ const initSocket = (
   room.on("connection", (socket) => {
     const req = socket.request;
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    console.log(" room 커넥션 접속 io :: ", ip, socket.id);
+    console.log(" room 커넥션 접속 io :: IP / socket.id", ip, socket.id);
 
     const {
       headers: { referer },
@@ -44,7 +46,7 @@ const initSocket = (
       : socket.emit("noRoomId", `roomId 없음 :: ${referer}`);
 
     socket.on("disconnect", (data) => {
-      console.log("room 나감 :: ", data, ip, socket.id);
+      console.log("room disconnect :: ", data, ip, socket.id);
       roomId && socket.leave(roomId);
     });
 
@@ -52,10 +54,13 @@ const initSocket = (
       console.log("new room :: ", msg, "\n", ip, socket.id);
     });
 
+    // 메시지 발송 3개
     socket.emit(
       "newRoom",
       "rooom 네임스페이스 연결되었고 방만들기 요청 from server"
     );
+
+    socket.broadcast.emit("broadcasttest", "이거슨 to room");
   });
 
   // CHAT 네임스페이스 전용 이벤트
@@ -65,9 +70,13 @@ const initSocket = (
     console.log(" chat 커넥션 접속 io :: ", ip, socket.id);
 
     //
-    socket.on("join", (data) => {
-      console.log("chat join :: ", data, ip, socket.id);
-      socket.join(data);
+    socket.on("join", (roomId) => {
+      console.log("chat join :: ", roomId, ip, socket.id);
+
+      socket.join(roomId);
+      socket
+        .to(roomId)
+        .emit("entered", { msg: "방에 입장하였습니다.", roomId });
     });
 
     //
@@ -75,18 +84,30 @@ const initSocket = (
       console.log("chat exit 나감 :: ", data, ip, socket.id);
     });
 
-    //
+    // socket.on("snedMsgToRoom", (data) => {
+    //   console.log("snedMsgToRoom:: ", data, "\n", ip, socket.id);
+
+    //   socket.emit("receivedMsgToFE", data);
+    // });
+
     socket.on("disconnect", (data) => {
       console.log("chat disconnect :: ", data, ip, socket.id);
       socket.leave("roomId");
     });
 
-    socket.on("chat", (msg) => {
-      console.log("chat :: ", msg, ip, socket.id);
+    interface IChatParams {
+      message: string;
+      sender: string;
+      sendee: string;
+      roomId: string;
+    }
+    socket.on("chat", (params: IChatParams) => {
+      console.log("chat :: ", params, ip, socket.id);
+      socket.to(params.roomId).emit("chat", params);
     });
-
-    socket.emit("join", " chat 네임스페이스 연결되었고 서버에서 채팅 참여");
   });
+
+  io.sockets.emit("totest", "이거슨 to room");
   return io;
 };
 

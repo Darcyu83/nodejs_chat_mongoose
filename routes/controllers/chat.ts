@@ -17,7 +17,7 @@ export const createRoom: RequestHandler = async (req, res, next) => {
       password: req.body.password,
     });
 
-    const io = req.app.get("io");
+    const io = req.app.get("socketIO");
 
     // io.of("/room").emit("newRoom", newRoom);
 
@@ -44,10 +44,11 @@ export const enterRoom: RequestHandler = async (req, res, next) => {
       return res.status(401).json({ message: "Password does not match." });
     }
 
-    const io = req.app.get("io");
+    const io = req.app.get("socketIO");
 
     const { rooms } = io.of("/chat").adapter;
 
+    console.log(" yuds ==== ", rooms);
     if (room.max <= rooms.get(req.params.id)?.size) {
       return res
         .status(406)
@@ -78,7 +79,7 @@ export const sendChat: RequestHandler = async (req, res, next) => {
     });
 
     // console.log("send Message ==== ", req.params.id);
-    req.app.get("io").of(NS_CHAT).to(req.params.id).emit("chat", chat);
+    req.app.get("socketIO").of(NS_CHAT).to(req.params.id).emit("chat", chat);
 
     res.status(201).json({ code: 201 });
   } catch (error) {

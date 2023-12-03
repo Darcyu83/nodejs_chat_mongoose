@@ -79,7 +79,7 @@ const server = app.listen(app.get("port"), () => {
 const io = initSocket(server);
 
 //path 지정한 IO객체를 전역 등록
-app.set("io", io);
+app.set("socketIO", io);
 
 // 사용법 :  req.app.get("io");
 // io.of("/room").emit("newRoom" , "보낼 메시지")
